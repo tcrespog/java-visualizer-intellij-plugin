@@ -57,6 +57,12 @@ class MainPane extends JPanel {
         }
     }
 
+    void refresh() {
+        if (viz != null) {
+            viz.refreshUI();
+        }
+    }
+
     private float getZoom() {
         return PropertiesComponent.getInstance().getFloat(JavaVisualizerManager.KEY_ZOOM, 1.0f);
     }

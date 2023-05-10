@@ -38,6 +38,13 @@
               description="Zoom out visualizer"
               icon="/icons/magnify-minus.svg"
       />
+      <action
+              id="JavaVisualizer.RefreshAction"
+              class="com.aegamesi.java_visualizer.plugin.RefreshAction"
+              text="Refresh"
+              description="Refresh visualizer"
+              icon="/icons/refresh.svg"
+      />
     </group>
   </actions>
 

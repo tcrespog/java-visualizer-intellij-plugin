@@ -67,7 +67,7 @@ public class VisualizationPanel extends JPanel {
         }
     }
 
-    private void refreshUI() {
+    public void refreshUI() {
         referenceComponents.clear();
         removeAll();
 
@@ -96,18 +96,20 @@ public class VisualizationPanel extends JPanel {
 		Dimension sizeStack = stackPanel.getPreferredSize();
 		Dimension sizeHeap = heapPanel.getPreferredSize();
 		int stackWidth = Math.max(labelStack.getPreferredSize().width, sizeStack.width);
-		int heapWidth = Math.max(labelHeap.getPreferredSize().width, sizeHeap.width);
+		// Add some extra width and height in order to give some room to move elements
+		int heapWidth = Math.max(labelHeap.getPreferredSize().width, sizeHeap.width) + 500;
+		int heapHeight = sizeHeap.height + 500;
 		labelStack.setBounds(padOuter, padOuter, stackWidth, labelHeight);
 		labelHeap.setBounds(padOuter + stackWidth + padCenter, padOuter, heapWidth, labelHeight);
 		stackPanel.setBounds(padOuter, padOuter + labelHeight + padTitle, stackWidth, sizeStack.height);
-		heapPanel.setBounds(padOuter + stackWidth + padCenter, padOuter + labelHeight + padTitle, heapWidth, sizeHeap.height);
+		heapPanel.setBounds(padOuter + stackWidth + padCenter, padOuter + labelHeight + padTitle, heapWidth, heapHeight);
 
         int outerWidth = (padOuter * 2) + stackWidth + padCenter + heapWidth;
         int outerHeight = (padOuter * 2) + labelHeight + padTitle + Math.max(sizeStack.height, sizeHeap.height);
         setPreferredSize(new Dimension((int) (outerWidth * scale), (int) (outerHeight * scale)));
 	}
 
-	private void computePointerPaths() {
+	public void computePointerPaths() {
 		if (heapPanel == null) {
 			return;
 		}

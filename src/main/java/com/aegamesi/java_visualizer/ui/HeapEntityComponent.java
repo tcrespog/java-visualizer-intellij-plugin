@@ -8,9 +8,9 @@ import com.aegamesi.java_visualizer.model.Value;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +20,23 @@ class HeapEntityComponent extends JPanel {
 	private HeapEntity entity;
 	private List<ValueComponent> valueComponents = new ArrayList<>();
 
+	/**
+	 * Component position on the screen
+	 */
+	private Point screenLocation;
+	/**
+	 * Component position in the relative coordinate system
+	 */
+	private Point componentLocation;
+
+
 	HeapEntityComponent(VisualizationPanel viz, HeapEntity entity) {
 		this.viz = viz;
 		this.entity = entity;
 
 		setOpaque(false);
 		setLayout(new BorderLayout());
+		setMouseListeners();
 		// setBorder(JBUI.Borders.empty(8));
 
 		JLabel topLabel = new CustomJLabel(entity.label);
@@ -45,6 +56,40 @@ class HeapEntityComponent extends JPanel {
 		if (mainPanel != null) {
 			add(mainPanel, BorderLayout.WEST);
 		}
+	}
+
+	private void setMouseListeners() {
+		addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// When the mouse is first pressed, save the original positions
+				screenLocation = e.getLocationOnScreen();
+				componentLocation = getLocation();
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// When the mouse is released, compute the pointer paths and repaint the panel to adjust the pointer positions
+				viz.computePointerPaths();
+				viz.repaint();
+			}
+		});
+
+		addMouseMotionListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// Compute how much the component has been moved
+				int deltaX = e.getXOnScreen() - screenLocation.x;
+				int deltaY = e.getYOnScreen() - screenLocation.y;
+
+				// Compute the new position based on the original position
+				int newX = componentLocation.x + deltaX;
+				int newY = componentLocation.y + deltaY;
+				// Set the new position
+				setLocation(newX, newY);
+			}
+		});
 	}
 
 	HeapEntity getEntity() {
