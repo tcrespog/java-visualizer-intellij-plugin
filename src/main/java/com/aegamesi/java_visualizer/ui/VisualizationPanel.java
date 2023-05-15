@@ -5,6 +5,7 @@ import com.aegamesi.java_visualizer.model.Value;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -35,24 +36,7 @@ public class VisualizationPanel extends JPanel {
 		referenceComponents = new ArrayList<>();
 		pointerConnections = new ArrayList<>();
 
-		addMouseMotionListener(new MouseAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-                int px = (int) (e.getX() / scale);
-                int py = (int) (e.getY() / scale);
-                PointerConnection sel = getSelectedPointer(px, py);
-				if (sel != selectedPointer) {
-					if (selectedPointer != null) {
-						selectedPointer.setSelected(false);
-					}
-					selectedPointer = sel;
-					if (selectedPointer != null) {
-						selectedPointer.setSelected(true);
-					}
-					repaint();
-				}
-			}
-		});
+		setPointerConnectionListeners();
 	}
 
     public void setTrace(ExecutionTrace t) {
@@ -69,6 +53,7 @@ public class VisualizationPanel extends JPanel {
 
     public void refreshUI() {
         referenceComponents.clear();
+		pointerConnections.clear();
         removeAll();
 
         buildUI();
@@ -76,6 +61,48 @@ public class VisualizationPanel extends JPanel {
         revalidate();
         repaint();
     }
+
+	private void setPointerConnectionListeners() {
+		addMouseMotionListener(new MouseAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				int px = (int) (e.getX() / scale);
+				int py = (int) (e.getY() / scale);
+				PointerConnection sel = getSelectedPointer(px, py);
+				if (sel != selectedPointer) {
+					if (selectedPointer != null) {
+						selectedPointer.setSelected(false);
+					}
+					selectedPointer = sel;
+					if (selectedPointer != null) {
+						selectedPointer.setSelected(true);
+					}
+					repaint();
+				}
+			}
+		});
+
+		final JPanel parentPanel = this;
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() != 2 || e.getButton() != MouseEvent.BUTTON1)
+					return;
+
+				int px = (int) (e.getX() / scale);
+				int py = (int) (e.getY() / scale);
+				PointerConnection sel = getSelectedPointer(px, py);
+				if (sel == null)
+					return;
+
+				// Show dialog to enter a label
+				String label = (String) JOptionPane.showInputDialog(parentPanel, null, "Label", JOptionPane.PLAIN_MESSAGE, null, null, sel.getLabel());
+				sel.setLabel(label);
+
+				repaint();
+			}
+		});
+	}
 
 	private void buildUI() {
 		JLabel labelStack = new CustomJLabel("Call Stack", JLabel.RIGHT);
@@ -113,6 +140,9 @@ public class VisualizationPanel extends JPanel {
 		if (heapPanel == null) {
 			return;
 		}
+
+		// Save previous connections temporarily
+		List<PointerConnection> previousConns = new ArrayList<>(pointerConnections);
 		pointerConnections.clear();
 
 		for (ValueComponent ref : referenceComponents) {
@@ -127,13 +157,24 @@ public class VisualizationPanel extends JPanel {
 				continue;
 			}
 
+			// Find any previous connection for the same reference
+			PointerConnection existingConn = previousConns.stream()
+					.filter(p -> p.getRefId() == refId)
+					.findAny().orElse(null);
+
 			PointerConnection p = new PointerConnection(
-					ref.isActive(),
+					ref,
 					refBounds.x + refBounds.width - (pointerWidth / 2.0),
 					refBounds.y + (refBounds.height / 2.0),
 					objBounds.x,
 					objBounds.y + (objBounds.height / 2.0)
 			);
+
+			// If the connection was already present, preserve its label
+			if (existingConn != null) {
+				p.setLabel(existingConn.getLabel());
+			}
+
 			pointerConnections.add(p);
 		}
 	}

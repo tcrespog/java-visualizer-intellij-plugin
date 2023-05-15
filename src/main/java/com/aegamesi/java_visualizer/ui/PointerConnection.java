@@ -15,6 +15,8 @@ class PointerConnection {
 
 	private boolean selected;
 	private boolean active;
+	private long refId;
+	private String label;
 	private double x1, y1, x2, y2;
 
 	private static int computeSegment(double x1, double y1, double x2, double y2) {
@@ -37,8 +39,9 @@ class PointerConnection {
 		return p;
 	}
 
-	PointerConnection(boolean active, double x1, double y1, double x2, double y2) {
-		this.active = active;
+	PointerConnection(ValueComponent ref, double x1, double y1, double x2, double y2) {
+		this.active = ref.isActive();
+		this.refId = ref.getValue().reference;
 		this.x1 = x1;
 		this.y1 = y1;
 		this.x2 = x2;
@@ -105,5 +108,25 @@ class PointerConnection {
 		int r = Constants.pointerSrcRadius;
 		g.fillOval((int) (x1 - r), (int) (y1 - r), r * 2, r * 2);
 		g.fill(arrow);
+
+		// Draw label in the middle point
+		if (label != null && !label.isBlank()) {
+			double midx = (x1 + x2) / 2.0;
+			double midy = (y1 + y2) / 2.0;
+			g.drawString(label, (float) midx, (float) midy);
+		}
 	}
+
+	long getRefId() {
+		return refId;
+	}
+
+	String getLabel() {
+		return label;
+	}
+
+	void setLabel(String label) {
+		this.label = label;
+	}
+
 }
