@@ -16,15 +16,17 @@ import java.util.Set;
 class HeapPanel extends JPanel {
 	private VisualizationPanel viz;
 	private Map<Long, HeapEntity> heap;
+	private ComponentFormat format;
 
 	private Map<Long, HeapEntityComponent> components = new HashMap<>();
 
 	private Set<Long> layoutCompleted = new HashSet<>();
 	private LinkedList<ValueComponent> layoutPending = new LinkedList<>();
 
-	HeapPanel(VisualizationPanel viz, Map<Long, HeapEntity> heap) {
+	HeapPanel(VisualizationPanel viz, Map<Long, HeapEntity> heap, ComponentFormat format) {
 		this.viz = viz;
 		this.heap = heap;
+		this.format = format;
 
 		setOpaque(false);
 		setLayout(null);
@@ -40,7 +42,7 @@ class HeapPanel extends JPanel {
 	private void createComponents() {
 		// Create the heap components (but don't lay them out yet)
 		for (Map.Entry<Long, HeapEntity> pair : heap.entrySet()) {
-			HeapEntityComponent obj = new HeapEntityComponent(viz, pair.getValue());
+			HeapEntityComponent obj = new HeapEntityComponent(viz, pair.getValue(), format);
 			components.put(pair.getKey(), obj);
 			add(obj);
 		}

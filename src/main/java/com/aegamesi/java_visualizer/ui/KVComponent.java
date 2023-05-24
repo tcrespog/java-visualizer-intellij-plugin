@@ -12,8 +12,14 @@ import java.util.List;
  * some additional drawing
  */
 class KVComponent extends JPanel {
+	private ComponentFormat format;
+
 	private int hsplit;
 	private int[] vsplits;
+
+	private int vsplit;
+	private int[] hsplits;
+
 	private int padding;
 	private Color colorLeft;
 	private Color colorRight;
@@ -24,6 +30,12 @@ class KVComponent extends JPanel {
 
 	KVComponent() {
 		setLayout(null);
+		this.format = ComponentFormat.LIST;
+	}
+
+	KVComponent(ComponentFormat format) {
+		this();
+		this.format = format;
 	}
 
 	void setPadding(int padding) {
@@ -45,9 +57,18 @@ class KVComponent extends JPanel {
 	}
 
 	void build() {
+		if (format == ComponentFormat.LIST) {
+			buildAsList();
+		} else {
+			buildAsTable();
+		}
+	}
+
+	private void buildAsList() {
 		int keyWidth = 0;
 		int valueWidth = 0;
 
+		// Calculate key and value max widths
 		int n = keys.size();
 		for (int i = 0; i < n; i++) {
 			keyWidth = Math.max(keyWidth, keys.get(i).getPreferredSize().width);
@@ -61,6 +82,7 @@ class KVComponent extends JPanel {
 			JComponent val = vals.get(i);
 			Dimension keySize = key.getPreferredSize();
 			Dimension valSize = val.getPreferredSize();
+			// Calculate max height
 			int h = Math.max(keySize.height, valSize.height);
 
 			add(key);
@@ -76,9 +98,50 @@ class KVComponent extends JPanel {
 		hsplit = keyWidth + (padding * 2);
 	}
 
+	private void buildAsTable() {
+		int keyHeight = 0;
+		int valueHeight = 0;
+
+		// Calculate key and value max heights
+		int n = keys.size();
+		for (int i = 0; i < n; i++) {
+			keyHeight = Math.max(keyHeight, keys.get(i).getPreferredSize().height);
+			valueHeight = Math.max(valueHeight, vals.get(i).getPreferredSize().height);
+		}
+
+		int x = 0;
+		hsplits = new int[n];
+		for (int i = 0; i < n; i += 1) {
+			JComponent key = keys.get(i);
+			JComponent val = vals.get(i);
+			Dimension keySize = key.getPreferredSize();
+			Dimension valSize = val.getPreferredSize();
+			// Calculate max width
+			int w = Math.max(keySize.width, valSize.width);
+
+			add(key);
+			add(val);
+			x += padding;
+			key.setBounds(x, padding + keyHeight - keySize.height, w, keySize.height);
+			val.setBounds(x, (padding * 3) + keyHeight, w, valueHeight);
+			x += w + padding;
+			hsplits[i] = x;
+		}
+
+		setPreferredSize(new Dimension(x, (padding * 4) + keyHeight + valueHeight));
+		vsplit = keyHeight + (padding * 2);
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		if (format == ComponentFormat.LIST) {
+			paintAsList(g);
+		} else {
+			paintAsTable(g);
+		}
+	}
+
+	private void paintAsList(Graphics g) {
 		if (colorLeft != null) {
 			g.setColor(Constants.colorHeapKey);
 			g.fillRect(0, 0, hsplit, getHeight());
@@ -94,6 +157,26 @@ class KVComponent extends JPanel {
 			g.drawLine(hsplit, 0, hsplit, getHeight() - 1);
 			for (int s : vsplits) {
 				g.drawLine(0, s - 1, getWidth(), s - 1);
+			}
+		}
+	}
+
+	private void paintAsTable(Graphics g) {
+		if (colorLeft != null) {
+			g.setColor(Constants.colorHeapKey);
+			g.fillRect(0, 0, getWidth(), vsplit);
+		}
+
+		if (colorRight != null) {
+			g.setColor(Constants.colorHeapVal);
+			g.fillRect(0, vsplit, getWidth(), getHeight() - vsplit);
+		}
+
+		if (colorBorder != null) {
+			g.setColor(Constants.colorHeapBorder);
+			g.drawLine(0, vsplit, getWidth() - 1, vsplit);
+			for (int s : hsplits) {
+				g.drawLine(s - 1, 0, s - 1, getHeight());
 			}
 		}
 	}

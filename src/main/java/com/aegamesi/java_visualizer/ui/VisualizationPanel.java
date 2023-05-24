@@ -23,6 +23,7 @@ public class VisualizationPanel extends JPanel {
 	private ExecutionTrace trace = null;
     private double scale = 1.0;
 
+	private ComponentFormat format;
 	private List<ValueComponent> referenceComponents;
 	private List<PointerConnection> pointerConnections;
 	private StackPanel stackPanel;
@@ -31,6 +32,8 @@ public class VisualizationPanel extends JPanel {
 	private PointerConnection selectedPointer;
 
 	public VisualizationPanel() {
+		this.format = ComponentFormat.LIST;
+
 		setBackground(colorBackground);
 		setLayout(null);
 		referenceComponents = new ArrayList<>();
@@ -112,7 +115,7 @@ public class VisualizationPanel extends JPanel {
 		labelStack.setFont(fontTitle);
 		labelHeap.setFont(fontTitle);
 		stackPanel = new StackPanel(this, trace.frames);
-		heapPanel = new HeapPanel(this, trace.heap);
+		heapPanel = new HeapPanel(this, trace.heap, format);
 
 		add(labelStack);
 		add(labelHeap);
@@ -177,6 +180,10 @@ public class VisualizationPanel extends JPanel {
 
 			pointerConnections.add(p);
 		}
+	}
+
+	public void setComponentFormat(ComponentFormat format) {
+		this.format = format;
 	}
 
 	@Override

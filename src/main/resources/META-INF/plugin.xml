@@ -45,6 +45,13 @@
               description="Refresh visualizer"
               icon="/icons/refresh.svg"
       />
+      <action
+              id="JavaVisualizer.ComponentFormatAction"
+              class="com.aegamesi.java_visualizer.plugin.ComponentFormatAction"
+              text="Format"
+              description="Change component format"
+              icon="/icons/dataTables.svg"
+      />
     </group>
   </actions>
 

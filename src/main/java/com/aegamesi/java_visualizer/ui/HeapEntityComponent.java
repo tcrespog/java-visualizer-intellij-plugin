@@ -30,7 +30,7 @@ class HeapEntityComponent extends JPanel {
 	private Point componentLocation;
 
 
-	HeapEntityComponent(VisualizationPanel viz, HeapEntity entity) {
+	HeapEntityComponent(VisualizationPanel viz, HeapEntity entity, ComponentFormat format) {
 		this.viz = viz;
 		this.entity = entity;
 
@@ -46,11 +46,11 @@ class HeapEntityComponent extends JPanel {
 
 		JPanel mainPanel = null;
 		if (entity instanceof HeapObject) {
-			mainPanel = new PanelObject((HeapObject) entity);
+			mainPanel = new PanelObject((HeapObject) entity, format);
 		} else if (entity instanceof HeapList) {
 			mainPanel = new PanelList((HeapList) entity);
 		} else if (entity instanceof HeapMap) {
-			mainPanel = new PanelMap((HeapMap) entity);
+			mainPanel = new PanelMap((HeapMap) entity, format);
 		}
 
 		if (mainPanel != null) {
@@ -101,7 +101,9 @@ class HeapEntityComponent extends JPanel {
 	}
 
 	private class PanelObject extends KVComponent {
-		PanelObject(HeapObject e) {
+		PanelObject(HeapObject e, ComponentFormat format) {
+			super(format);
+
 			List<JLabel> keys = new ArrayList<>();
 			List<ValueComponent> vals = new ArrayList<>();
 			for (Map.Entry<String, Value> local : e.fields.entrySet()) {
@@ -123,7 +125,9 @@ class HeapEntityComponent extends JPanel {
 	}
 
 	private class PanelMap extends KVComponent {
-		PanelMap(HeapMap e) {
+		PanelMap(HeapMap e, ComponentFormat format) {
+			super(format);
+
 			List<ValueComponent> keys = new ArrayList<>();
 			List<ValueComponent> vals = new ArrayList<>();
 			for (HeapMap.Pair entry : e.pairs) {

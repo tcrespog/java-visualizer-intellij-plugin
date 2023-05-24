@@ -1,6 +1,7 @@
 package com.aegamesi.java_visualizer.plugin;
 
 import com.aegamesi.java_visualizer.model.ExecutionTrace;
+import com.aegamesi.java_visualizer.ui.ComponentFormat;
 import com.aegamesi.java_visualizer.ui.VisualizationPanel;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.components.JBScrollPane;
@@ -61,6 +62,11 @@ class MainPane extends JPanel {
         if (viz != null) {
             viz.refreshUI();
         }
+    }
+
+    void setComponentFormat(ComponentFormat format) {
+        viz.setComponentFormat(format);
+        viz.refreshUI();
     }
 
     private float getZoom() {
