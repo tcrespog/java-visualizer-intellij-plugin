@@ -66,7 +66,7 @@ class MainPane extends JPanel {
 
     void setComponentFormat(ComponentFormat format) {
         viz.setComponentFormat(format);
-        viz.refreshUI();
+        viz.refreshUI(false);
     }
 
     private float getZoom() {
