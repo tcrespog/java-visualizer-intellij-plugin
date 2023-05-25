@@ -59,7 +59,7 @@ class MainPane extends JPanel {
 
     void refresh() {
         if (viz != null) {
-            viz.refreshUI();
+            viz.refreshUI(true);
         }
     }
 

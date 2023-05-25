@@ -41,20 +41,22 @@ public class VisualizationPanel extends JPanel {
 
     public void setTrace(ExecutionTrace t) {
         this.trace = t;
-        refreshUI();
+        refreshUI(false);
     }
 
     public void setScale(double scale) {
         this.scale = scale;
         if (this.trace != null) {
-            refreshUI();
+            refreshUI(false);
         }
     }
 
-    public void refreshUI() {
+    public void refreshUI(boolean clearPointers) {
         referenceComponents.clear();
-		pointerConnections.clear();
-        removeAll();
+		if (clearPointers)
+			pointerConnections.clear();
+
+		removeAll();
 
         buildUI();
 
