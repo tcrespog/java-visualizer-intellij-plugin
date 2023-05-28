@@ -260,9 +260,8 @@ public class Tracer {
 		}
 
 		String typeName = obj.referenceType().name();
-		if ((doesImplementInterface(obj, "java.util.List")
-				|| doesImplementInterface(obj, "java.util.Set"))
-				&& isInternalPackage(typeName)) {
+		boolean isCollection = doesImplementInterface(obj, "java.util.Collection");
+		if (isCollection && isInternalPackage(typeName)) {
 			HeapList out = new HeapList();
 			out.type = HeapEntity.Type.LIST; // XXX: or SET
 			out.label = displayNameForType(obj);
