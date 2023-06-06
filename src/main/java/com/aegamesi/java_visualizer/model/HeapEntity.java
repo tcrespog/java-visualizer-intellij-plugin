@@ -13,6 +13,8 @@ public abstract class HeapEntity {
 
 	public abstract boolean hasSameStructure(HeapEntity other);
 
+	public abstract void annotateDiffWith(HeapEntity previousEntity);
+
 	JSONObject toJson() {
 		JSONObject o = new JSONObject();
 		o.put("id", id);

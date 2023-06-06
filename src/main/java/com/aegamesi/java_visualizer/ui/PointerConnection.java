@@ -15,6 +15,7 @@ class PointerConnection {
 
 	private boolean selected;
 	private boolean active;
+	private boolean changed;
 	private long refId;
 	private String label;
 	private double x1, y1, x2, y2;
@@ -41,6 +42,7 @@ class PointerConnection {
 
 	PointerConnection(ValueComponent ref, double x1, double y1, double x2, double y2) {
 		this.active = ref.isActive();
+		this.changed = ref.getValue().changed;
 		this.refId = ref.getValue().reference;
 		this.x1 = x1;
 		this.y1 = y1;
@@ -98,10 +100,12 @@ class PointerConnection {
 	void paint(Graphics2D g) {
 		Color c = Constants.colorPointerInactive;
 		if (active) {
-			c = Constants.colorPointer;
-			if (selected) {
+			if (selected)
 				c = Constants.colorPointerSelected;
-			}
+			else if (changed)
+				c = Constants.colorValueChanged;
+			else
+				c = Constants.colorPointer;
 		}
 		g.setColor(c);
 		g.draw(mainShape);

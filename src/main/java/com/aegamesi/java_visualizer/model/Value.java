@@ -2,6 +2,9 @@ package com.aegamesi.java_visualizer.model;
 
 import org.json.JSONArray;
 
+import java.util.Map;
+import java.util.Objects;
+
 public class Value {
 	// primitive or reference
 	public Type type;
@@ -11,6 +14,12 @@ public class Value {
 	public String stringValue;
 	public char charValue;
 	public long reference;
+
+	public boolean changed;
+
+	public enum Type {
+		NULL, VOID, LONG, DOUBLE, BOOLEAN, STRING, CHAR, REFERENCE;
+	}
 
 	@Override
 	public String toString() {
@@ -34,8 +43,35 @@ public class Value {
 		}
 	}
 
-	public enum Type {
-		NULL, VOID, LONG, DOUBLE, BOOLEAN, STRING, CHAR, REFERENCE;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Value value = (Value) o;
+
+		if (longValue != value.longValue) return false;
+		if (Double.compare(value.doubleValue, doubleValue) != 0) return false;
+		if (booleanValue != value.booleanValue) return false;
+		if (charValue != value.charValue) return false;
+		if (reference != value.reference) return false;
+		if (type != value.type) return false;
+		return Objects.equals(stringValue, value.stringValue);
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		result = type.hashCode();
+		result = 31 * result + (int) (longValue ^ (longValue >>> 32));
+		temp = Double.doubleToLongBits(doubleValue);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		result = 31 * result + (booleanValue ? 1 : 0);
+		result = 31 * result + (stringValue != null ? stringValue.hashCode() : 0);
+		result = 31 * result + (int) charValue;
+		result = 31 * result + (int) (reference ^ (reference >>> 32));
+		return result;
 	}
 
 	JSONArray toJson() {
@@ -88,5 +124,19 @@ public class Value {
 				break;
 		}
 		return v;
+	}
+
+	public static void annotateDiffInVars(Map<String, Value> targetVars, Map<String, Value> compareVars) {
+		for (Map.Entry<String, Value> targetVar : targetVars.entrySet()) {
+
+			Value comparisonValue = compareVars.get(targetVar.getKey());
+			boolean varAlreadyExisted = (comparisonValue != null);
+			if (!varAlreadyExisted)
+				continue;
+
+			Value targetValue = targetVar.getValue();
+			boolean isEqual = targetValue.equals(comparisonValue);
+			targetValue.changed = !isEqual;
+		}
 	}
 }

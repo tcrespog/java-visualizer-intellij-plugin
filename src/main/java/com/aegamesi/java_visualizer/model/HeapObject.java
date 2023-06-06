@@ -18,6 +18,13 @@ public class HeapObject extends HeapEntity {
 	}
 
 	@Override
+	public void annotateDiffWith(HeapEntity previousEntity) {
+		HeapObject otherObject = (HeapObject) previousEntity;
+
+		Value.annotateDiffInVars(fields, otherObject.fields);
+	}
+
+	@Override
 	JSONObject toJson() {
 		JSONObject o = super.toJson();
 		o.put("keys", fields.keySet());

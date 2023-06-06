@@ -23,6 +23,11 @@ public class HeapMap extends HeapEntity{
 	}
 
 	@Override
+	public void annotateDiffWith(HeapEntity previousEntity) {
+
+	}
+
+	@Override
 	JSONObject toJson() {
 		JSONObject o = super.toJson();
 		o.put("keys", pairs.stream().map(p -> p.key.toJson()).toArray());

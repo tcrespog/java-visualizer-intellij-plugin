@@ -12,6 +12,15 @@ public class ExecutionTrace {
 	public Map<Long, HeapEntity> heap = new TreeMap<>();
 	public Map<String, Value> statics = new TreeMap<>();
 
+
+	public void annotateDiffWith(ExecutionTrace previousTrace) {
+		if (previousTrace == null)
+			return;
+
+		annotateDiffInFrames(previousTrace.frames);
+		annotateDiffInHeap(previousTrace.heap);
+	}
+
 	public String toJsonString() {
 		JSONObject obj = new JSONObject();
 		obj.put("frames", frames.stream().map(Frame::toJson).toArray());
@@ -30,5 +39,29 @@ public class ExecutionTrace {
 			trace.heap.put(e.id, e);
 		}
 		return trace;
+	}
+
+	private void annotateDiffInFrames(List<Frame> previousFrames) {
+		for (Frame frame : frames) {
+			Frame previousFrame = previousFrames.stream()
+					.filter( f -> f.getMethodName().equals(frame.getMethodName()) )
+					.findFirst().orElse(null);
+
+			if (previousFrame == null)
+				continue;
+
+			frame.annotateDiffWith(previousFrame);
+		}
+	}
+
+	private void annotateDiffInHeap(Map<Long, HeapEntity> previousHeap) {
+		for (Long key : heap.keySet()) {
+			HeapEntity previousEntity = previousHeap.get(key);
+			if (previousEntity == null)
+				continue;
+
+			HeapEntity entity = heap.get(key);
+			entity.annotateDiffWith(previousEntity);
+		}
 	}
 }

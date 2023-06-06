@@ -18,6 +18,11 @@ public class HeapList extends HeapEntity {
 	}
 
 	@Override
+	public void annotateDiffWith(HeapEntity previousEntity) {
+
+	}
+
+	@Override
 	JSONObject toJson() {
 		JSONObject o = super.toJson();
 		o.put("items", items.stream().map(Value::toJson).toArray());

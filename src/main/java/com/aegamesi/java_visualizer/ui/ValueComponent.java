@@ -4,8 +4,7 @@ import com.aegamesi.java_visualizer.model.Value;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 
 class ValueComponent extends JPanel {
 	private Value val;
@@ -24,7 +23,7 @@ class ValueComponent extends JPanel {
 		setLayout(new BorderLayout());
 
 		JLabel label = new CustomJLabel(val.toString());
-		label.setForeground(Constants.colorText);
+		label.setForeground(val.changed ? Constants.colorValueChanged : Constants.colorText);
 		if (val.type == Value.Type.STRING || val.type == Value.Type.CHAR) {
 			label.setFont(Constants.fontUIMono);
 		} else {

@@ -29,4 +29,13 @@ public class Frame {
 		}
 		return f;
 	}
+
+	public String getMethodName() {
+		return name.split(":")[0];
+	}
+
+	public void annotateDiffWith(Frame previousFrame) {
+		Value.annotateDiffInVars(locals, previousFrame.locals);
+	}
+
 }

@@ -11,6 +11,11 @@ public class HeapPrimitive extends HeapEntity {
 	}
 
 	@Override
+	public void annotateDiffWith(HeapEntity previousEntity) {
+
+	}
+
+	@Override
 	JSONObject toJson() {
 		JSONObject o = super.toJson();
 		o.put("val", value.toJson());

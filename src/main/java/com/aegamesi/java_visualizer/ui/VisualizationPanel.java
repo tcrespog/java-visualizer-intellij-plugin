@@ -43,6 +43,8 @@ public class VisualizationPanel extends JPanel {
 	}
 
     public void setTrace(ExecutionTrace t) {
+		// Compare with previous trace
+		t.annotateDiffWith(this.trace);
         this.trace = t;
         refreshUI(false);
     }

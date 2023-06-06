@@ -27,6 +27,8 @@ class Constants {
 	static final Color colorPointerInactive = new Color(0xCC, 0xCC, 0xCC);
 	static final Color colorPointerSelected = new Color(0xE9, 0x3F, 0x34);
 
+	static final Color colorValueChanged = new Color(0x00, 230, 0);
+
 	static final Font fontTitle = getFont("source-sans", Font.PLAIN, 18);
 	static final Font fontUI = getFont("source-sans", Font.PLAIN, 14);
 	static final Font fontUIMono = getFont("source-code", Font.PLAIN, 12);
